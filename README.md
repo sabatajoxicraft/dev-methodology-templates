@@ -7,7 +7,7 @@ A comprehensive, docs-first, project-memory-driven development methodology that 
 Initialize any new project with this methodology:
 
 ```bash
-git clone https://github.com/sabata-sa/dev-methodology-templates.git .methodology && .methodology/setup.sh
+git clone https://github.com/sabatajoxicraft/dev-methodology-templates.git .methodology && .methodology/setup.sh
 ```
 
 ## 🏗️ Core Principles
