@@ -53,9 +53,25 @@ fi
 # Create basic project structure
 echo "🏗️ Setting up project structure..."
 
-# Create src structure if it doesn't exist
+# Create minimal, language-agnostic structure
 if [ ! -d "src" ]; then
-    mkdir -p src/{features,shared/{components,hooks,utils,types},assets}
+    mkdir -p src
+    echo "# Source Code" > src/README.md
+    echo "Organize your source code here according to your technology stack and project needs." >> src/README.md
+fi
+
+# Create tests directory (universal)
+if [ ! -d "tests" ]; then
+    mkdir -p tests
+    echo "# Tests" > tests/README.md
+    echo "Organize your tests here. Follow the testing patterns appropriate for your technology stack." >> tests/README.md
+fi
+
+# Create scripts directory (universal)
+if [ ! -d "scripts" ]; then
+    mkdir -p scripts
+    echo "# Scripts" > scripts/README.md
+    echo "Add build, deployment, and automation scripts here." >> scripts/README.md
 fi
 
 # Create VS Code configuration
@@ -65,12 +81,8 @@ if [ ! -d ".vscode" ]; then
     cp .methodology/templates/vscode/* .vscode/
 fi
 
-# Create package.json if it doesn't exist (for JS/TS projects)
-if [ ! -f "package.json" ] && ( [ -f "*.js" ] || [ -f "*.ts" ] || [ -f "*.jsx" ] || [ -f "*.tsx" ] ); then
-    echo "📦 Creating package.json..."
-    cp .methodology/templates/package.json.template package.json
-    sed -i "s/\${PROJECT_NAME}/$(basename "$PROJECT_ROOT")/g" package.json
-fi
+# Note: Technology-specific files (package.json, requirements.txt, etc.) 
+# should be created manually based on your project's needs
 
 # Create .gitignore if it doesn't exist
 if [ ! -f ".gitignore" ]; then

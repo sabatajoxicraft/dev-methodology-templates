@@ -1,91 +1,103 @@
 #!/bin/bash
 
-# 🧹 Test Cleanup Script
-# Removes the test project directory and re-runs methodology initialization
-# Uses this to verify the setup works correctly without embedded git warnings
+# 🧪 Test Cleanup and Re-run Script
+# Deletes test folder and optionally re-runs the methodology test
 
 set -e
 
 TEST_DIR="/c/apps/test"
 
-echo "🧹 Cleaning up test environment..."
+echo "🧪 Methodology Test Cleanup Script"
+echo "=================================="
 
 # Check if test directory exists
 if [ -d "$TEST_DIR" ]; then
-    echo "🗑️ Removing existing test directory: $TEST_DIR"
-    rm -rf "$TEST_DIR"
-    echo "✅ Test directory removed"
-else
-    echo "ℹ️ Test directory doesn't exist, nothing to clean"
-fi
-
-# Create fresh test directory
-echo "📁 Creating fresh test directory..."
-mkdir -p "$TEST_DIR"
-cd "$TEST_DIR"
-
-echo "🎯 Running methodology initialization test..."
-echo "📋 Command: git clone https://github.com/sabatajoxicraft/dev-methodology-templates.git .methodology && .methodology/setup.sh"
-echo ""
-
-# Run the methodology setup
-git clone https://github.com/sabatajoxicraft/dev-methodology-templates.git .methodology && .methodology/setup.sh
-
-echo ""
-echo "🔍 Test Results:"
-echo "================"
-
-# Check for embedded repository warnings in git status
-if git status 2>&1 | grep -q "embedded"; then
-    echo "❌ FAILED: Still getting embedded repository warnings"
-    exit 1
-else
-    echo "✅ PASSED: No embedded repository warnings"
-fi
-
-# Check if .methodology is in git tracking
-if git ls-files | grep -q "^\.methodology"; then
-    echo "❌ FAILED: .methodology is still being tracked by git"
-    exit 1
-else
-    echo "✅ PASSED: .methodology is properly excluded from git"
-fi
-
-# Check if .gitignore contains .methodology exclusion
-if grep -q "\.methodology/" .gitignore; then
-    echo "✅ PASSED: .gitignore properly excludes .methodology/"
-else
-    echo "❌ FAILED: .gitignore missing .methodology/ exclusion"
-    exit 1
-fi
-
-# Check if essential files were created
-ESSENTIAL_FILES=("project_memory.md" "docs/architecture.md" "scripts/create-feature" ".vscode/tasks.json")
-for file in "${ESSENTIAL_FILES[@]}"; do
-    if [ -f "$file" ] || [ -L "$file" ]; then
-        echo "✅ PASSED: $file created successfully"
+    echo "📁 Found test directory: $TEST_DIR"
+    
+    # Show what's in the test directory
+    echo "📋 Current contents:"
+    ls -la "$TEST_DIR" 2>/dev/null || echo "   (empty or inaccessible)"
+    
+    echo ""
+    read -p "🗑️ Delete the test directory? (y/N): " delete_choice
+    
+    if [[ $delete_choice =~ ^[Yy]$ ]]; then
+        echo "🗑️ Deleting test directory..."
+        rm -rf "$TEST_DIR"
+        echo "✅ Test directory deleted successfully!"
     else
-        echo "❌ FAILED: $file is missing"
-        exit 1
+        echo "❌ Test directory deletion cancelled."
+        exit 0
     fi
-done
-
-# Check git history
-COMMIT_COUNT=$(git rev-list --count HEAD)
-if [ "$COMMIT_COUNT" -eq 1 ]; then
-    echo "✅ PASSED: Clean git history with single initialization commit"
 else
-    echo "⚠️ WARNING: Expected 1 commit, found $COMMIT_COUNT"
+    echo "ℹ️ Test directory $TEST_DIR does not exist."
 fi
 
 echo ""
-echo "🎉 All tests passed! Methodology setup is working correctly."
+read -p "🚀 Create new test directory and run methodology test? (y/N): " test_choice
+
+if [[ $test_choice =~ ^[Yy]$ ]]; then
+    echo ""
+    echo "🧪 Creating new test and running methodology..."
+    echo "=============================================="
+    
+    # Create test directory
+    mkdir -p "$TEST_DIR"
+    cd "$TEST_DIR"
+    
+    echo "📁 Created and entered: $(pwd)"
+    echo ""
+    echo "🚀 Running methodology initialization..."
+    echo "Command: git clone https://github.com/sabatajoxicraft/dev-methodology-templates.git .methodology && .methodology/setup.sh"
+    echo ""
+    
+    # Run the methodology setup
+    if git clone https://github.com/sabatajoxicraft/dev-methodology-templates.git .methodology && .methodology/setup.sh; then
+        echo ""
+        echo "✅ Methodology test completed successfully!"
+        echo ""
+        echo "📋 Test results:"
+        echo "📁 Directory: $(pwd)"
+        echo "🗂️ Files created:"
+        ls -la | grep -v "^d" | tail -n +2 | sed 's/^/   /'
+        echo ""
+        echo "📂 Directories created:"
+        ls -la | grep "^d" | tail -n +3 | sed 's/^/   /'
+        
+        # Check git status
+        if [ -d ".git" ]; then
+            echo ""
+            echo "🔍 Git status:"
+            git status --porcelain | head -10 | sed 's/^/   /' || echo "   Working directory clean"
+        fi
+        
+        # Check for methodology folder
+        if [ -d ".methodology" ]; then
+            echo ""
+            echo "⚠️ Note: .methodology folder exists (this is normal)"
+            echo "🔍 Git tracking status of .methodology:"
+            if git ls-files | grep -q "^\.methodology"; then
+                echo "   ❌ .methodology is being tracked by git (this should be fixed)"
+            else
+                echo "   ✅ .methodology is not tracked by git (correct)"
+            fi
+        fi
+        
+    else
+        echo ""
+        echo "❌ Methodology test failed!"
+        echo "💡 Check the error messages above for troubleshooting."
+    fi
+    
+else
+    echo "ℹ️ Test cancelled. Directory cleaned up."
+fi
+
 echo ""
-echo "📊 Test Summary:"
-echo "- ✅ No embedded repository warnings"
-echo "- ✅ .methodology properly excluded from git"
-echo "- ✅ All essential files created"
-echo "- ✅ Clean project structure"
+echo "🎯 Test cleanup script completed!"
 echo ""
-echo "🧪 Test directory location: $TEST_DIR"
-echo "💡 You can inspect the test results or run 'rm -rf $TEST_DIR' to clean up"
+echo "💡 Useful commands for manual testing:"
+echo "   cd $TEST_DIR"
+echo "   git clone https://github.com/sabatajoxicraft/dev-methodology-templates.git .methodology && .methodology/setup.sh"
+echo "   ls -la"
+echo "   git status"

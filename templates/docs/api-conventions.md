@@ -1,51 +1,48 @@
-# API Conventions - ${PROJECT_NAME}
+# Interface & API Conventions - ${PROJECT_NAME}
 
 **Last Updated**: ${DATE}
 
-## 🔗 RESTful API Design
+## 🔗 API Design Principles
 
-### Base URL Structure
+### General Guidelines
+- **Consistency**: Maintain consistent patterns across all interfaces
+- **Simplicity**: Design intuitive and easy-to-use interfaces
+- **Documentation**: Thoroughly document all public interfaces
+- **Versioning**: Plan for interface evolution and backward compatibility
+
+### Interface Types
+- **HTTP APIs**: RESTful or GraphQL APIs
+- **Library APIs**: Function/method interfaces for libraries
+- **Database Interfaces**: Data access patterns and schemas
+- **Event Interfaces**: Message and event schemas
+
+## 🌐 HTTP API Conventions (if applicable)
+
+### RESTful Design Patterns
+
+#### Resource Naming
+- Use plural nouns for collections: `/users`, `/orders`, `/products`
+- Use singular nouns for single resources: `/user/123`, `/order/456`
+- Use consistent casing: `kebab-case` or `snake_case`
+
+#### HTTP Methods & Status Codes
 ```
-https://api.${PROJECT_NAME}.com/v1/
+GET    /resources          → 200 OK (list)
+GET    /resources/123      → 200 OK (single), 404 Not Found
+POST   /resources          → 201 Created, 400 Bad Request
+PUT    /resources/123      → 200 OK, 404 Not Found
+PATCH  /resources/123      → 200 OK, 404 Not Found
+DELETE /resources/123      → 204 No Content, 404 Not Found
 ```
 
-### HTTP Methods
-- **GET**: Retrieve data
-- **POST**: Create new resources
-- **PUT**: Update entire resource
-- **PATCH**: Partial resource update
-- **DELETE**: Remove resource
-
-### Resource Naming
-- Use plural nouns for collections: `/users`, `/posts`, `/comments`
-- Use singular nouns for single resources: `/user/123`, `/post/456`
-- Use kebab-case for multi-word resources: `/user-profiles`, `/blog-posts`
-
-### URL Patterns
-```
-GET    /users                    # Get all users
-GET    /users/123                # Get specific user
-POST   /users                    # Create new user
-PUT    /users/123                # Update entire user
-PATCH  /users/123                # Partial user update
-DELETE /users/123                # Delete user
-
-# Nested resources
-GET    /users/123/posts          # Get user's posts
-POST   /users/123/posts          # Create post for user
-GET    /users/123/posts/456      # Get specific user post
-```
-
-## 📊 Response Format
-
-### Success Response Structure
+#### Response Format Standards
 ```json
 {
   "success": true,
   "data": {
     "id": 123,
-    "name": "John Doe",
-    "email": "john@example.com"
+    "name": "Resource Name",
+    "createdAt": "2024-01-15T10:30:00Z"
   },
   "meta": {
     "timestamp": "2024-01-15T10:30:00Z",
@@ -54,33 +51,13 @@ GET    /users/123/posts/456      # Get specific user post
 }
 ```
 
-### Collection Response Structure
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": 123,
-      "name": "John Doe"
-    }
-  ],
-  "meta": {
-    "total": 100,
-    "page": 1,
-    "perPage": 20,
-    "hasNext": true,
-    "hasPrev": false
-  }
-}
-```
-
-### Error Response Structure
+#### Error Response Format
 ```json
 {
   "success": false,
   "error": {
     "code": "VALIDATION_ERROR",
-    "message": "Invalid input provided",
+    "message": "Human-readable error description",
     "details": [
       {
         "field": "email",
@@ -95,270 +72,343 @@ GET    /users/123/posts/456      # Get specific user post
 }
 ```
 
-## 🔐 Authentication & Authorization
-
-### Authentication Header
+### Query Parameters
 ```
-Authorization: Bearer <jwt_token>
-```
-
-### API Key (for service-to-service)
-```
-X-API-Key: <api_key>
-```
-
-### Rate Limiting Headers
-```
-X-RateLimit-Limit: 1000
-X-RateLimit-Remaining: 999
-X-RateLimit-Reset: 1640995200
-```
-
-## 📝 Query Parameters
-
-### Filtering
-```
+# Filtering
 GET /users?status=active&role=admin
-GET /posts?category=tech&published=true
-```
 
-### Sorting
-```
-GET /users?sort=name:asc
-GET /posts?sort=createdAt:desc,title:asc
-```
+# Sorting
+GET /users?sort=name:asc,createdAt:desc
 
-### Pagination
-```
+# Pagination
 GET /users?page=2&limit=20
 GET /users?offset=20&limit=20
-```
 
-### Field Selection
-```
+# Field Selection
 GET /users?fields=id,name,email
-GET /posts?include=author,comments
+
+# Search
+GET /users?search=john&q=developer
 ```
 
-### Search
-```
-GET /users?search=john
-GET /posts?q=react+tutorial
-```
+## 📚 Library/Module Interface Design
 
-## 📋 HTTP Status Codes
+### Function/Method Design
 
-### Success Codes
-- **200 OK**: Successful GET, PUT, PATCH
-- **201 Created**: Successful POST
-- **204 No Content**: Successful DELETE
+#### Naming Conventions
+```python
+# Python example
+def get_user_by_id(user_id: int) -> Optional[User]:
+    """Retrieve a user by their ID."""
+    pass
 
-### Client Error Codes
-- **400 Bad Request**: Invalid request syntax
-- **401 Unauthorized**: Authentication required
-- **403 Forbidden**: Access denied
-- **404 Not Found**: Resource not found
-- **409 Conflict**: Resource conflict
-- **422 Unprocessable Entity**: Validation errors
-- **429 Too Many Requests**: Rate limit exceeded
+def create_user(user_data: UserCreateData) -> User:
+    """Create a new user with the provided data."""
+    pass
 
-### Server Error Codes
-- **500 Internal Server Error**: Server error
-- **502 Bad Gateway**: Upstream server error
-- **503 Service Unavailable**: Server temporarily unavailable
-
-## 🔄 Versioning
-
-### URL Versioning (Preferred)
-```
-https://api.example.com/v1/users
-https://api.example.com/v2/users
+def update_user(user_id: int, updates: UserUpdateData) -> User:
+    """Update an existing user with partial data."""
+    pass
 ```
 
-### Header Versioning
+```typescript
+// TypeScript example
+interface UserService {
+  getUserById(userId: string): Promise<User | null>;
+  createUser(userData: UserCreateData): Promise<User>;
+  updateUser(userId: string, updates: Partial<User>): Promise<User>;
+  deleteUser(userId: string): Promise<void>;
+}
 ```
+
+#### Parameter Design
+- **Required parameters first**: Place mandatory parameters before optional ones
+- **Use descriptive names**: Avoid abbreviations and single letters
+- **Group related parameters**: Use objects/structs for related data
+- **Provide defaults**: Sensible default values for optional parameters
+
+```go
+// Go example
+type UserSearchOptions struct {
+    Status   string
+    Role     string
+    Page     int
+    PageSize int
+}
+
+func SearchUsers(query string, options UserSearchOptions) ([]User, error) {
+    // Implementation
+}
+```
+
+#### Return Value Design
+- **Consistent return types**: Use similar patterns across similar functions
+- **Error handling**: Clear error reporting mechanisms
+- **Null/empty handling**: Consistent handling of missing or empty data
+
+```java
+// Java example
+public class UserService {
+    public Optional<User> findUserById(String userId) {
+        // Returns empty Optional if not found
+    }
+    
+    public Result<User, ValidationError> createUser(UserData userData) {
+        // Returns either success with User or error with details
+    }
+}
+```
+
+## 📊 Data Interface Conventions
+
+### Data Transfer Objects (DTOs)
+```typescript
+// Input DTOs - for receiving data
+interface CreateUserRequest {
+  name: string;
+  email: string;
+  password: string;
+  role?: UserRole;
+}
+
+// Output DTOs - for sending data
+interface UserResponse {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Update DTOs - for partial updates
+interface UpdateUserRequest {
+  name?: string;
+  email?: string;
+  role?: UserRole;
+}
+```
+
+### Data Validation
+```python
+# Python with Pydantic example
+from pydantic import BaseModel, EmailStr, validator
+
+class UserCreateRequest(BaseModel):
+    name: str
+    email: EmailStr
+    password: str
+    
+    @validator('password')
+    def validate_password(cls, v):
+        if len(v) < 8:
+            raise ValueError('Password must be at least 8 characters')
+        return v
+```
+
+## 🔄 Event & Message Interfaces
+
+### Event Schema Design
+```json
+{
+  "eventType": "user.created",
+  "eventId": "evt_123456789",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "version": "1.0",
+  "source": "user-service",
+  "data": {
+    "userId": "123",
+    "userName": "John Doe",
+    "userEmail": "john@example.com"
+  },
+  "metadata": {
+    "correlationId": "corr_987654321",
+    "causationId": "cause_456789123"
+  }
+}
+```
+
+### Message Queue Conventions
+```
+# Topic/Queue naming
+user.events          # User-related events
+order.commands        # Order processing commands
+notification.requests # Notification requests
+
+# Message types
+user.created         # Domain events
+user.updated
+order.process        # Commands
+email.send          # Requests
+```
+
+## 🔐 Authentication & Authorization
+
+### Authentication Patterns
+```http
+# Bearer Token
+Authorization: Bearer <jwt_token>
+
+# API Key
+X-API-Key: <api_key>
+
+# Basic Authentication (dev/testing only)
+Authorization: Basic <base64_credentials>
+```
+
+### Permission Models
+```typescript
+interface User {
+  id: string;
+  permissions: Permission[];
+  roles: Role[];
+}
+
+interface Permission {
+  resource: string;    // 'users', 'orders', 'reports'
+  action: string;      // 'read', 'write', 'delete'
+  scope?: string;      // 'own', 'team', 'all'
+}
+```
+
+## 📋 Documentation Standards
+
+### Interface Documentation Template
+```markdown
+## Function: createUser
+
+**Purpose**: Creates a new user in the system
+
+**Parameters**:
+- `userData` (UserCreateData): User information
+  - `name` (string, required): Full name
+  - `email` (string, required): Valid email address
+  - `password` (string, required): Min 8 characters
+
+**Returns**: 
+- `Promise<User>`: Created user object
+- Throws `ValidationError` for invalid input
+- Throws `ConflictError` if email already exists
+
+**Example**:
+```typescript
+const user = await createUser({
+  name: "John Doe",
+  email: "john@example.com",
+  password: "securePassword123"
+});
+```
+
+**Error Handling**:
+- Validates email format
+- Checks password strength
+- Ensures email uniqueness
+```
+
+### API Endpoint Documentation
+```markdown
+## POST /api/v1/users
+
+**Description**: Create a new user account
+
+**Request Body**:
+```json
+{
+  "name": "string (required)",
+  "email": "string (required, email format)",
+  "password": "string (required, min 8 chars)"
+}
+```
+
+**Responses**:
+- `201 Created`: User successfully created
+- `400 Bad Request`: Invalid input data
+- `409 Conflict`: Email already exists
+- `422 Unprocessable Entity`: Validation errors
+
+**Example Request**:
+```bash
+curl -X POST https://api.example.com/v1/users \
+  -H "Content-Type: application/json" \
+  -d '{"name":"John Doe","email":"john@example.com","password":"secret123"}'
+```
+```
+
+## 🧪 Testing Interface Contracts
+
+### Contract Testing
+```typescript
+// API contract tests
+describe('User API Contract', () => {
+  it('should return user with correct schema', async () => {
+    const response = await api.get('/users/123');
+    
+    expect(response.data).toMatchSchema({
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        name: { type: 'string' },
+        email: { type: 'string', format: 'email' }
+      },
+      required: ['id', 'name', 'email']
+    });
+  });
+});
+```
+
+### Mock Interfaces
+```python
+# Python testing with mocks
+from unittest.mock import Mock
+
+def test_user_service():
+    # Mock external dependencies
+    mock_database = Mock()
+    mock_database.find_user.return_value = User(id=1, name="Test")
+    
+    service = UserService(database=mock_database)
+    user = service.get_user_by_id(1)
+    
+    assert user.name == "Test"
+    mock_database.find_user.assert_called_once_with(1)
+```
+
+## 🔧 Versioning & Evolution
+
+### Interface Versioning
+```
+# URL versioning
+/api/v1/users
+/api/v2/users
+
+# Header versioning
 Accept: application/vnd.api+json; version=1
 API-Version: 2024-01-15
 ```
 
-## 📊 Request/Response Examples
+### Backward Compatibility
+- **Additive changes**: New optional fields/parameters
+- **Deprecation process**: Clear timeline and migration path
+- **Breaking changes**: Major version increments only
 
-### Create User
-```http
-POST /v1/users
-Content-Type: application/json
-
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "securePassword123"
-}
-```
-
-Response:
-```http
-HTTP/1.1 201 Created
-Content-Type: application/json
-
-{
-  "success": true,
-  "data": {
-    "id": 123,
-    "name": "John Doe",
-    "email": "john@example.com",
-    "createdAt": "2024-01-15T10:30:00Z"
-  }
-}
-```
-
-### Update User
-```http
-PATCH /v1/users/123
-Content-Type: application/json
-
-{
-  "name": "John Smith"
-}
-```
-
-### Get Users with Filtering
-```http
-GET /v1/users?status=active&sort=name:asc&page=1&limit=20
-```
-
-Response:
-```http
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-  "success": true,
-  "data": [
-    {
-      "id": 123,
-      "name": "Alice Johnson",
-      "status": "active"
-    }
-  ],
-  "meta": {
-    "total": 50,
-    "page": 1,
-    "perPage": 20,
-    "hasNext": true,
-    "hasPrev": false
-  }
-}
-```
-
-## 🛡️ Security Best Practices
-
-### Input Validation
-- Validate all input data
-- Sanitize user inputs
-- Use parameterized queries
-- Implement rate limiting
-
-### CORS Configuration
-```javascript
-{
-  "origin": ["https://app.example.com"],
-  "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  "allowedHeaders": ["Content-Type", "Authorization"],
-  "credentials": true
-}
-```
-
-### Security Headers
-```
-Content-Security-Policy: default-src 'self'
-X-Frame-Options: DENY
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-```
-
-## 📋 API Documentation
-
-### OpenAPI/Swagger Specification
-```yaml
-openapi: 3.0.3
-info:
-  title: ${PROJECT_NAME} API
-  version: 1.0.0
-  description: API for ${PROJECT_NAME}
-
-paths:
-  /users:
-    get:
-      summary: Get all users
-      parameters:
-        - name: page
-          in: query
-          schema:
-            type: integer
-            default: 1
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UsersResponse'
-```
-
-### Endpoint Documentation Template
+### Change Documentation
 ```markdown
-## GET /v1/users
+## API Changelog
 
-Retrieve a list of users with optional filtering and pagination.
+### v2.1.0 (2024-01-15)
+**Added**:
+- New optional field `profileImage` in User response
+- Query parameter `includeInactive` for user listing
 
-### Parameters
-- `status` (string, optional): Filter by user status (`active`, `inactive`)
-- `role` (string, optional): Filter by user role
-- `page` (integer, optional): Page number (default: 1)
-- `limit` (integer, optional): Items per page (default: 20, max: 100)
+**Deprecated**:
+- Field `avatar` in User response (use `profileImage` instead)
 
-### Response
-Success (200 OK):
-```json
-{
-  "success": true,
-  "data": [...],
-  "meta": {...}
-}
+### v2.0.0 (2024-01-01)
+**Breaking Changes**:
+- Removed deprecated `username` field from User
+- Changed date format from Unix timestamp to ISO 8601
 ```
-
-### Error Handling
-- 400: Invalid query parameters
-- 401: Authentication required
-- 403: Insufficient permissions
-```
-
-## 🔧 Development Standards
-
-### API Testing
-- Unit tests for all endpoints
-- Integration tests for complex workflows
-- Performance testing for high-traffic endpoints
-- Security testing for authentication and authorization
-
-### Logging
-```javascript
-{
-  "timestamp": "2024-01-15T10:30:00Z",
-  "level": "INFO",
-  "message": "User created successfully",
-  "userId": 123,
-  "requestId": "req_123456789",
-  "duration": 150
-}
-```
-
-### Monitoring
-- Response time monitoring
-- Error rate tracking
-- API usage analytics
-- Uptime monitoring
 
 ---
 
-*These API conventions ensure consistency, maintainability, and ease of use across all endpoints.*
+*These interface conventions ensure consistency, usability, and maintainability across all system boundaries.*

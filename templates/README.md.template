@@ -1,21 +1,24 @@
 # ${PROJECT_NAME}
 
-A modern, well-structured project built with the portable development methodology.
+A well-structured project built with the portable development methodology.
 
 ## 🎯 Quick Start
 
 ```bash
-# Install dependencies
-npm install
+# Install dependencies (adjust for your stack)
+# For Node.js: npm install
+# For Python: pip install -r requirements.txt
+# For Go: go mod download
+# For Rust: cargo build
 
-# Start development server
-npm start
+# Start development (adjust for your stack)
+# [Add your start command here]
 
-# Run tests
-npm test
+# Run tests (adjust for your stack)
+# [Add your test command here]
 
-# Build for production
-npm run build
+# Build for production (adjust for your stack)
+# [Add your build command here]
 ```
 
 ## 📁 Project Structure
@@ -29,20 +32,19 @@ ${PROJECT_NAME}/
 ├── src/
 │   ├── features/           # 🧩 Feature-based organization
 │   │   └── [feature-name]/
-│   │       ├── components/ # React components
-│   │       ├── hooks/      # Custom hooks
-│   │       ├── services/   # Business logic
-│   │       ├── types.ts    # TypeScript types
-│   │       └── __tests__/  # Tests
+│   │       ├── core/       # Core business logic
+│   │       ├── models/     # Data models/schemas
+│   │       ├── services/   # External integrations
+│   │       └── tests/      # Feature tests
 │   ├── shared/             # 🔄 Shared utilities
-│   │   ├── components/     # Reusable UI components
-│   │   ├── hooks/          # Shared hooks
 │   │   ├── utils/          # Utility functions
-│   │   └── types/          # Common types
-│   └── assets/             # 🎨 Static assets
+│   │   ├── models/         # Common data models
+│   │   └── services/       # Shared services
+│   └── config/             # 🔧 Configuration
+├── tests/                  # 🧪 Test suite
+├── scripts/                # 🚀 Automation scripts
 ├── project_memory.md       # 📝 Project context and decisions
-├── .methodology/           # 🛠️ Development methodology
-└── scripts/                # 🚀 Automation scripts
+└── .methodology/           # 🛠️ Development methodology
 ```
 
 ## 🛠️ Development Workflow
@@ -50,35 +52,35 @@ ${PROJECT_NAME}/
 ### Creating Features
 ```bash
 # Create a new feature
-npm run create:feature user-authentication
+./scripts/create-feature user-authentication
 
-# Create a component within a feature
-npm run create:component LoginForm user-authentication
+# Create a module within a feature
+./scripts/create-component AuthService user-authentication
 ```
 
-### Component Hierarchy
-1. **Define interfaces/types** in `types.ts`
-2. **Create the component** with proper TypeScript typing
-3. **Add styling** with SCSS modules
-4. **Write tests** for all functionality
-5. **Create Storybook stories** for documentation
+### Module Development Process
+1. **Define data models** - Create schemas, interfaces, or data structures
+2. **Implement core logic** - Build the main functionality
+3. **Add external integrations** - APIs, databases, third-party services
+4. **Create user interface** - If applicable to your project type
+5. **Write comprehensive tests** - Unit, integration, and end-to-end tests
+6. **Document thoroughly** - Code comments and usage examples
 
-### Code Organization
+### Code Organization Principles
 - **Feature-based structure**: Related functionality grouped together
-- **Single responsibility**: Each component/function does one thing well
-- **Type safety**: Strict TypeScript usage throughout
-- **Test coverage**: Aim for 80%+ coverage on critical paths
+- **Single responsibility**: Each module/function does one thing well
+- **Separation of concerns**: Clear boundaries between different aspects
+- **Test coverage**: Comprehensive testing at all levels
 
 ## 🧪 Testing Strategy
 
-- **Unit Tests**: Test individual components and functions
-- **Integration Tests**: Test feature workflows
-- **E2E Tests**: Test complete user journeys
+- **Unit Tests**: Test individual functions and modules
+- **Integration Tests**: Test feature workflows and interactions
+- **End-to-End Tests**: Test complete user journeys (if applicable)
 
 ```bash
-npm test              # Run all tests
-npm run test:watch    # Run tests in watch mode
-npm run test:coverage # Generate coverage report
+# Run tests (adjust for your stack)
+# [Add your test commands here]
 ```
 
 ## 📚 Documentation
@@ -88,46 +90,37 @@ npm run test:coverage # Generate coverage report
 - **Style Guide**: `docs/style-guide.md` - Coding conventions
 - **API Conventions**: `docs/api-conventions.md` - API design patterns
 
-## 🎨 Styling
-
-- **SCSS Modules**: Component-scoped styling
-- **BEM Methodology**: Consistent class naming
-- **Design System**: Reusable design tokens
-- **Responsive Design**: Mobile-first approach
-
 ## 🔧 Available Scripts
 
 | Script | Description |
 |--------|-------------|
-| `npm start` | Start development server |
-| `npm test` | Run test suite |
-| `npm run build` | Build for production |
-| `npm run lint` | Check code quality |
-| `npm run format` | Format code with Prettier |
-| `npm run storybook` | Start Storybook |
-| `npm run create:feature` | Create new feature |
-| `npm run create:component` | Create new component |
-| `npm run update:memory` | Update project memory |
+| `./scripts/create-feature` | Create new feature structure |
+| `./scripts/create-component` | Create new module/component |
+| `./scripts/update-memory` | Update project memory |
+| `./scripts/status` | Show project status |
 
 ## 🚀 Deployment
 
-### Development
+### Development Environment
 ```bash
-npm start
-# Application runs on http://localhost:3000
+# Start development environment
+# [Add your development commands here]
 ```
 
-### Production Build
+### Production Deployment
 ```bash
-npm run build
-# Creates optimized build in `build/` folder
+# Build and deploy
+# [Add your deployment commands here]
 ```
 
-### Environment Variables
-Create `.env` files for different environments:
+### Environment Configuration
+Configure your environment variables and settings:
 ```bash
-REACT_APP_API_URL=https://api.example.com
-REACT_APP_ENV=development
+# Copy example configuration
+cp .env.example .env
+
+# Edit configuration
+# [Add environment-specific instructions]
 ```
 
 ## 🤝 Contributing
@@ -148,7 +141,7 @@ git add .
 git commit -m "feat(feature): add new functionality"
 
 # Update project memory
-npm run update:memory "Completed new feature implementation"
+./scripts/update-memory "Completed new feature implementation"
 
 # Push and create PR
 git push origin feature/new-feature
@@ -158,20 +151,19 @@ git push origin feature/new-feature
 
 **Current Phase**: [Check project_memory.md]  
 **Last Updated**: [Date from project_memory.md]  
-**Team Size**: [Number of contributors]  
-**Tech Stack**: React, TypeScript, SCSS, Jest, Storybook
+**Technology Stack**: [Listed in project_memory.md]
 
 ## 📞 Support
 
 - **Documentation**: Check `docs/` folder for detailed information
-- **Issues**: Use GitHub issues for bug reports and feature requests
+- **Issues**: Use issue tracker for bug reports and feature requests
 - **Questions**: Refer to project memory for context and decisions
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the [LICENSE](LICENSE) file for details.
 
 ---
 
 **Built with the Portable Development Methodology** 🎯  
-*Consistent, documented, and maintainable development across any environment.*
+*Consistent, documented, and maintainable development across any technology stack and environment.*

@@ -2,6 +2,7 @@
 
 # 🎯 Create Feature Script
 # Creates a new feature with the proper structure and templates
+# TECH-STACK AGNOSTIC: Works with any programming language or framework
 
 set -e
 
@@ -24,92 +25,129 @@ fi
 
 # Create feature directory structure
 echo "📁 Creating directory structure..."
-mkdir -p "$FEATURE_DIR"/{components,hooks,services,types,__tests__}
+mkdir -p "$FEATURE_DIR"/{core,models,services,tests}
 
-# Create index.ts file
-echo "📝 Creating feature index..."
-cat > "$FEATURE_DIR/index.ts" << EOF
-// Feature: ${FEATURE_NAME}
-// Export all public components, hooks, and types
-
-// Components
-export * from './components';
-
-// Hooks
-export * from './hooks';
-
-// Services
-export * from './services';
-
-// Types
-export * from './types';
-EOF
-
-# Create component index
-cat > "$FEATURE_DIR/components/index.ts" << EOF
-// Export all components from this feature
-EOF
-
-# Create hooks index
-cat > "$FEATURE_DIR/hooks/index.ts" << EOF
-// Export all hooks from this feature
-EOF
-
-# Create services index
-cat > "$FEATURE_DIR/services/index.ts" << EOF
-// Export all services from this feature
-EOF
-
-# Create types file
+# Create feature README
 PASCAL_CASE_NAME=$(echo "$FEATURE_NAME" | sed -r 's/(^|-)([a-z])/\U\2/g')
-cat > "$FEATURE_DIR/types.ts" << EOF
-// Types for ${FEATURE_NAME} feature
-
-export interface ${PASCAL_CASE_NAME}State {
-  // Define state interface
-}
-
-export interface ${PASCAL_CASE_NAME}Props {
-  // Define props interface
-}
-
-export interface ${PASCAL_CASE_NAME}Data {
-  // Define data interface
-}
-
-// Add more types as needed
-EOF
-
-# Create a basic README for the feature
 cat > "$FEATURE_DIR/README.md" << EOF
 # ${PASCAL_CASE_NAME} Feature
 
 ## Overview
-Brief description of what this feature does.
+Brief description of what this feature does and its purpose.
 
-## Components
-- List main components
+## Structure
+- **core/**: Main business logic and implementation
+- **models/**: Data models, schemas, interfaces, or types
+- **services/**: External integrations (APIs, databases, third-party services)
+- **tests/**: Feature-specific tests
 
-## Hooks
-- List custom hooks
+## Key Components
+- List main modules and their responsibilities
 
-## Services
-- List services and their purposes
+## Data Models
+- List key data structures and their purposes
 
-## Types
-- Key TypeScript interfaces and types
+## Services & Integrations
+- List external services and APIs used
 
 ## Usage
-\`\`\`typescript
-import { SomeComponent } from '@/features/${FEATURE_NAME}';
-
-<SomeComponent />
+\`\`\`
+// Add usage examples appropriate for your technology stack
 \`\`\`
 
 ## Testing
-Run tests with:
+Run tests specific to this feature:
 \`\`\`bash
-npm test -- ${FEATURE_NAME}
+# Add test commands appropriate for your stack
+\`\`\`
+
+## Dependencies
+- List any feature-specific dependencies
+
+## Configuration
+- Document any configuration required for this feature
+EOF
+
+# Create core directory with example structure
+cat > "$FEATURE_DIR/core/README.md" << EOF
+# ${PASCAL_CASE_NAME} Core Logic
+
+This directory contains the main business logic for the ${FEATURE_NAME} feature.
+
+## Guidelines
+- Keep business logic pure and testable
+- Separate concerns into focused modules
+- Follow your language's best practices for organization
+- Document complex algorithms and business rules
+
+## Structure
+Organize files according to your technology stack:
+- Single responsibility modules
+- Clear interfaces/contracts
+- Minimal external dependencies
+EOF
+
+# Create models directory
+cat > "$FEATURE_DIR/models/README.md" << EOF
+# ${PASCAL_CASE_NAME} Data Models
+
+This directory contains data models, schemas, interfaces, or types for the ${FEATURE_NAME} feature.
+
+## Guidelines
+- Define clear data contracts
+- Use appropriate validation
+- Document field purposes and constraints
+- Version your schemas when needed
+
+## Examples
+\`\`\`
+// Add examples appropriate for your technology stack
+// For TypeScript: interfaces and types
+// For Python: Pydantic models or dataclasses
+// For Go: structs with tags
+// For Java: POJOs or records
+\`\`\`
+EOF
+
+# Create services directory
+cat > "$FEATURE_DIR/services/README.md" << EOF
+# ${PASCAL_CASE_NAME} Services
+
+This directory contains services for external integrations and business operations.
+
+## Guidelines
+- Separate external dependencies from core logic
+- Implement proper error handling
+- Use dependency injection patterns
+- Include retry logic and timeouts where appropriate
+
+## Types of Services
+- **API clients**: External service integrations
+- **Data access**: Database operations
+- **Business services**: Complex operations that coordinate multiple sources
+- **Validation services**: Data validation and sanitization
+EOF
+
+# Create tests directory
+cat > "$FEATURE_DIR/tests/README.md" << EOF
+# ${PASCAL_CASE_NAME} Tests
+
+This directory contains tests specific to the ${FEATURE_NAME} feature.
+
+## Test Organization
+- **Unit tests**: Test individual modules and functions
+- **Integration tests**: Test feature workflows and external integrations
+- **Test data**: Mock data and fixtures
+
+## Guidelines
+- Test both happy path and error scenarios
+- Mock external dependencies
+- Use descriptive test names
+- Maintain good test coverage
+
+## Running Tests
+\`\`\`bash
+# Add commands specific to your testing framework
 \`\`\`
 EOF
 
@@ -119,23 +157,24 @@ DATE=$(date '+%Y-%m-%d %H:%M')
 echo "" >> project_memory.md
 echo "### ${DATE} - Created ${FEATURE_NAME} feature" >> project_memory.md
 echo "- Created feature structure in ${FEATURE_DIR}" >> project_memory.md
-echo "- Set up components, hooks, services, and types directories" >> project_memory.md
+echo "- Set up core, models, services, and tests directories" >> project_memory.md
+echo "- Added documentation templates for each directory" >> project_memory.md
 echo "" >> project_memory.md
 
 echo "✅ Feature ${FEATURE_NAME} created successfully!"
 echo ""
 echo "📁 Structure created:"
 echo "   ${FEATURE_DIR}/"
-echo "   ├── components/"
-echo "   ├── hooks/"
-echo "   ├── services/"
-echo "   ├── types.ts"
-echo "   ├── __tests__/"
-echo "   ├── index.ts"
-echo "   └── README.md"
+echo "   ├── core/           # Main business logic"
+echo "   ├── models/         # Data models and schemas"
+echo "   ├── services/       # External integrations"
+echo "   ├── tests/          # Feature tests"
+echo "   └── README.md       # Feature documentation"
 echo ""
 echo "🎯 Next steps:"
-echo "1. Create your first component: scripts/create-component <ComponentName> ${FEATURE_NAME}"
-echo "2. Add types to ${FEATURE_DIR}/types.ts"
-echo "3. Update the feature README.md with details"
-echo "4. Update project_memory.md with feature goals and plans"
+echo "1. Define your data models in ${FEATURE_DIR}/models/"
+echo "2. Implement core business logic in ${FEATURE_DIR}/core/"
+echo "3. Add external integrations in ${FEATURE_DIR}/services/"
+echo "4. Write tests in ${FEATURE_DIR}/tests/"
+echo "5. Update the feature README.md with specific details"
+echo "6. Update project_memory.md with feature goals and plans"

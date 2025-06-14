@@ -1,341 +1,528 @@
 #!/bin/bash
 
-# 🎯 Create Component Script
-# Creates a new component with proper structure, tests, and stories
+# 🎯 Create Component/Module Script
+# Creates a new module with proper structure and documentation
+# TECH-STACK AGNOSTIC: Works with any programming language or framework
 
 set -e
 
 if [ $# -lt 2 ]; then
-    echo "❌ Usage: $0 <ComponentName> <feature-name> [component-type]"
+    echo "❌ Usage: $0 <ModuleName> <feature-name> [location]"
     echo "📋 Examples:"
-    echo "   $0 UserProfile user-authentication"
-    echo "   $0 LoginForm user-authentication form"
-    echo "   $0 Button shared ui"
+    echo "   $0 UserService user-authentication"
+    echo "   $0 AuthValidator user-authentication core"
+    echo "   $0 Logger shared services"
     exit 1
 fi
 
-COMPONENT_NAME=$1
+MODULE_NAME=$1
 FEATURE_NAME=$2
-COMPONENT_TYPE=${3:-"component"}
+LOCATION=${3:-"core"}
 
 # Determine the target directory
 if [ "$FEATURE_NAME" = "shared" ]; then
-    COMPONENT_DIR="src/shared/components"
+    case $LOCATION in
+        "core"|"services"|"models"|"utils")
+            MODULE_DIR="src/shared/${LOCATION}"
+            ;;
+        *)
+            MODULE_DIR="src/shared/utils"
+            ;;
+    esac
 else
-    COMPONENT_DIR="src/features/${FEATURE_NAME}/components"
+    case $LOCATION in
+        "core"|"services"|"models"|"tests")
+            MODULE_DIR="src/features/${FEATURE_NAME}/${LOCATION}"
+            ;;
+        *)
+            MODULE_DIR="src/features/${FEATURE_NAME}/core"
+            ;;
+    esac
 fi
 
-FULL_COMPONENT_DIR="${COMPONENT_DIR}/${COMPONENT_NAME}"
-
-echo "🚀 Creating component: ${COMPONENT_NAME} in ${FEATURE_NAME}"
-
-# Check if component already exists
-if [ -d "$FULL_COMPONENT_DIR" ]; then
-    echo "❌ Component ${COMPONENT_NAME} already exists in ${FEATURE_NAME}!"
-    exit 1
-fi
+echo "🚀 Creating module: ${MODULE_NAME} in ${FEATURE_NAME}/${LOCATION}"
 
 # Check if feature exists (unless it's shared)
 if [ "$FEATURE_NAME" != "shared" ] && [ ! -d "src/features/${FEATURE_NAME}" ]; then
     echo "❌ Feature ${FEATURE_NAME} doesn't exist!"
-    echo "💡 Create it first with: scripts/create-feature ${FEATURE_NAME}"
+    echo "💡 Create it first with: ./scripts/create-feature ${FEATURE_NAME}"
     exit 1
 fi
 
-# Create component directory
-echo "📁 Creating component directory..."
-mkdir -p "$FULL_COMPONENT_DIR"
+# Create module directory if it doesn't exist
+mkdir -p "$MODULE_DIR"
 
-# Create main component file
-echo "📝 Creating component file..."
-cat > "${FULL_COMPONENT_DIR}/${COMPONENT_NAME}.tsx" << EOF
-import React from 'react';
-import './${COMPONENT_NAME}.scss';
-
-export interface ${COMPONENT_NAME}Props {
-  /** Component children */
-  children?: React.ReactNode;
-  /** Additional CSS class name */
-  className?: string;
-  /** Component variant */
-  variant?: 'default' | 'primary' | 'secondary';
-  /** Disabled state */
-  disabled?: boolean;
-}
-
-/**
- * ${COMPONENT_NAME} component
- * 
- * @param props - Component props
- * @returns JSX element
- * 
- * @example
- * \`\`\`tsx
- * <${COMPONENT_NAME} variant="primary">
- *   Content here
- * </${COMPONENT_NAME}>
- * \`\`\`
- */
-export const ${COMPONENT_NAME}: React.FC<${COMPONENT_NAME}Props> = ({
-  children,
-  className = '',
-  variant = 'default',
-  disabled = false,
-  ...props
-}) => {
-  const cssClasses = [
-    '${COMPONENT_NAME}',
-    \`\${COMPONENT_NAME}--\${variant}\`,
-    disabled && \`\${COMPONENT_NAME}--disabled\`,
-    className
-  ].filter(Boolean).join(' ');
-
-  return (
-    <div 
-      className={cssClasses}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-};
-
-export default ${COMPONENT_NAME};
-EOF
-
-# Create SCSS file
-echo "🎨 Creating styles file..."
-cat > "${FULL_COMPONENT_DIR}/${COMPONENT_NAME}.scss" << EOF
-.${COMPONENT_NAME} {
-  // Base styles
-  display: block;
-  
-  // Variants
-  &--default {
-    // Default variant styles
-  }
-  
-  &--primary {
-    // Primary variant styles
-  }
-  
-  &--secondary {
-    // Secondary variant styles
-  }
-  
-  // States
-  &--disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
-  // Responsive design
-  @media (max-width: 768px) {
-    // Mobile styles
-  }
-}
-EOF
-
-# Create test file
-echo "🧪 Creating test file..."
-cat > "${FULL_COMPONENT_DIR}/${COMPONENT_NAME}.test.tsx" << EOF
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import { ${COMPONENT_NAME} } from './${COMPONENT_NAME}';
-
-describe('${COMPONENT_NAME}', () => {
-  describe('rendering', () => {
-    it('should render with default props', () => {
-      render(<${COMPONENT_NAME}>Test content</${COMPONENT_NAME}>);
-      
-      const component = screen.getByText('Test content');
-      expect(component).toBeInTheDocument();
-      expect(component).toHaveClass('${COMPONENT_NAME}');
-      expect(component).toHaveClass('${COMPONENT_NAME}--default');
-    });
-
-    it('should render with custom className', () => {
-      render(
-        <${COMPONENT_NAME} className="custom-class">
-          Test content
-        </${COMPONENT_NAME}>
-      );
-      
-      const component = screen.getByText('Test content');
-      expect(component).toHaveClass('custom-class');
-    });
-
-    it('should render with different variants', () => {
-      const { rerender } = render(
-        <${COMPONENT_NAME} variant="primary">
-          Test content
-        </${COMPONENT_NAME}>
-      );
-      
-      let component = screen.getByText('Test content');
-      expect(component).toHaveClass('${COMPONENT_NAME}--primary');
-
-      rerender(
-        <${COMPONENT_NAME} variant="secondary">
-          Test content
-        </${COMPONENT_NAME}>
-      );
-      
-      component = screen.getByText('Test content');
-      expect(component).toHaveClass('${COMPONENT_NAME}--secondary');
-    });
-  });
-
-  describe('states', () => {
-    it('should handle disabled state', () => {
-      render(
-        <${COMPONENT_NAME} disabled>
-          Test content
-        </${COMPONENT_NAME}>
-      );
-      
-      const component = screen.getByText('Test content');
-      expect(component).toHaveClass('${COMPONENT_NAME}--disabled');
-    });
-  });
-
-  describe('interactions', () => {
-    it('should handle click events', () => {
-      const handleClick = jest.fn();
-      render(
-        <${COMPONENT_NAME} onClick={handleClick}>
-          Test content
-        </${COMPONENT_NAME}>
-      );
-      
-      const component = screen.getByText('Test content');
-      fireEvent.click(component);
-      
-      expect(handleClick).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('accessibility', () => {
-    it('should be accessible', () => {
-      render(<${COMPONENT_NAME}>Accessible content</${COMPONENT_NAME}>);
-      
-      const component = screen.getByText('Accessible content');
-      expect(component).toBeInTheDocument();
-      // Add more accessibility tests as needed
-    });
-  });
-});
-EOF
-
-# Create Storybook story file
-echo "📚 Creating Storybook story..."
-cat > "${FULL_COMPONENT_DIR}/${COMPONENT_NAME}.stories.tsx" << EOF
-import type { Meta, StoryObj } from '@storybook/react';
-import { ${COMPONENT_NAME} } from './${COMPONENT_NAME}';
-
-const meta: Meta<typeof ${COMPONENT_NAME}> = {
-  title: '${FEATURE_NAME}/${COMPONENT_NAME}',
-  component: ${COMPONENT_NAME},
-  parameters: {
-    layout: 'centered',
-    docs: {
-      description: {
-        component: '${COMPONENT_NAME} component for ${FEATURE_NAME} feature.'
-      }
-    }
-  },
-  tags: ['autodocs'],
-  argTypes: {
-    variant: {
-      control: { type: 'select' },
-      options: ['default', 'primary', 'secondary']
-    },
-    disabled: {
-      control: { type: 'boolean' }
-    }
-  }
-};
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
-  args: {
-    children: 'Default ${COMPONENT_NAME}',
-    variant: 'default'
-  }
-};
-
-export const Primary: Story = {
-  args: {
-    children: 'Primary ${COMPONENT_NAME}',
-    variant: 'primary'
-  }
-};
-
-export const Secondary: Story = {
-  args: {
-    children: 'Secondary ${COMPONENT_NAME}',
-    variant: 'secondary'
-  }
-};
-
-export const Disabled: Story = {
-  args: {
-    children: 'Disabled ${COMPONENT_NAME}',
-    disabled: true
-  }
-};
-
-export const WithCustomClass: Story = {
-  args: {
-    children: 'Custom styled ${COMPONENT_NAME}',
-    className: 'custom-styling'
-  }
-};
-EOF
-
-# Create component index file
-cat > "${FULL_COMPONENT_DIR}/index.ts" << EOF
-export { ${COMPONENT_NAME} } from './${COMPONENT_NAME}';
-export type { ${COMPONENT_NAME}Props } from './${COMPONENT_NAME}';
-EOF
-
-# Update the feature's component index
-if [ "$FEATURE_NAME" = "shared" ]; then
-    COMPONENTS_INDEX="${COMPONENT_DIR}/index.ts"
+# Get file extension based on project context
+FILE_EXT=""
+if [ -f "package.json" ]; then
+    # Node.js project - check for TypeScript
+    if [ -f "tsconfig.json" ] || grep -q "typescript" package.json 2>/dev/null; then
+        FILE_EXT=".ts"
+    else
+        FILE_EXT=".js"
+    fi
+elif [ -f "requirements.txt" ] || [ -f "setup.py" ] || [ -f "pyproject.toml" ]; then
+    FILE_EXT=".py"
+elif [ -f "go.mod" ]; then
+    FILE_EXT=".go"
+elif [ -f "Cargo.toml" ]; then
+    FILE_EXT=".rs"
+elif [ -f "pom.xml" ] || [ -f "build.gradle" ]; then
+    FILE_EXT=".java"
+elif [ -f "*.cs" ] || [ -f "*.csproj" ]; then
+    FILE_EXT=".cs"
 else
-    COMPONENTS_INDEX="src/features/${FEATURE_NAME}/components/index.ts"
+    # Ask user for file extension
+    echo "🤔 Could not determine project type. What file extension should I use?"
+    echo "Examples: .js, .ts, .py, .go, .rs, .java, .cs, .php, .rb"
+    read -p "File extension: " FILE_EXT
+    
+    if [[ ! "$FILE_EXT" =~ ^\. ]]; then
+        FILE_EXT=".$FILE_EXT"
+    fi
 fi
 
-echo "📝 Updating component index..."
-echo "export { ${COMPONENT_NAME} } from './${COMPONENT_NAME}';" >> "$COMPONENTS_INDEX"
-echo "export type { ${COMPONENT_NAME}Props } from './${COMPONENT_NAME}';" >> "$COMPONENTS_INDEX"
+MODULE_FILE="${MODULE_DIR}/${MODULE_NAME}${FILE_EXT}"
+TEST_FILE="${MODULE_DIR}/${MODULE_NAME}.test${FILE_EXT}"
+
+# Check if module already exists
+if [ -f "$MODULE_FILE" ]; then
+    echo "❌ Module ${MODULE_NAME}${FILE_EXT} already exists in ${MODULE_DIR}!"
+    exit 1
+fi
+
+# Create module documentation file
+cat > "${MODULE_DIR}/${MODULE_NAME}.md" << EOF
+# ${MODULE_NAME}
+
+## Purpose
+Brief description of what this module does and its responsibilities.
+
+## Location
+- **Feature**: ${FEATURE_NAME}
+- **Directory**: ${LOCATION}
+- **File**: ${MODULE_NAME}${FILE_EXT}
+
+## Dependencies
+- List any dependencies this module has
+- External libraries or services used
+- Other modules this depends on
+
+## Usage
+\`\`\`
+// Add usage examples appropriate for your technology stack
+\`\`\`
+
+## API/Interface
+Document the public interface:
+- Functions/methods exposed
+- Parameters and return types
+- Error conditions
+
+## Configuration
+- Any configuration required
+- Environment variables used
+- Default values
+
+## Testing
+- Test file: ${MODULE_NAME}.test${FILE_EXT}
+- Key test scenarios covered
+- Mock requirements
+
+## Implementation Notes
+- Important implementation decisions
+- Performance considerations
+- Known limitations or trade-offs
+
+## Related Modules
+- List related modules or components
+- Dependencies and relationships
+EOF
+
+# Create basic module file based on file extension
+case $FILE_EXT in
+    ".ts"|".js")
+        cat > "$MODULE_FILE" << EOF
+/**
+ * ${MODULE_NAME}
+ * 
+ * ${FEATURE_NAME} feature - ${LOCATION}
+ * 
+ * @description Brief description of what this module does
+ * @author Generated by Portable Development Methodology
+ * @created $(date '+%Y-%m-%d')
+ */
+
+export class ${MODULE_NAME} {
+  /**
+   * Create a new ${MODULE_NAME} instance
+   */
+  constructor() {
+    // Initialize the module
+  }
+
+  /**
+   * Main functionality - replace with actual implementation
+   * @returns Result of the operation
+   */
+  public execute(): void {
+    // Implement main functionality
+  }
+}
+
+// Export default instance if appropriate
+export default ${MODULE_NAME};
+EOF
+        ;;
+    ".py")
+        cat > "$MODULE_FILE" << EOF
+"""
+${MODULE_NAME}
+
+${FEATURE_NAME} feature - ${LOCATION}
+
+This module provides functionality for [brief description].
+
+Author: Generated by Portable Development Methodology
+Created: $(date '+%Y-%m-%d')
+"""
+
+from typing import Any, Optional
+
+
+class ${MODULE_NAME}:
+    """
+    ${MODULE_NAME} class for handling [specific functionality].
+    """
+
+    def __init__(self) -> None:
+        """Initialize the ${MODULE_NAME}."""
+        # Initialize the module
+        pass
+
+    def execute(self) -> None:
+        """
+        Main functionality - replace with actual implementation.
+        
+        Returns:
+            Result of the operation
+        """
+        # Implement main functionality
+        pass
+
+
+# Create a default instance if appropriate
+default_instance = ${MODULE_NAME}()
+EOF
+        ;;
+    ".go")
+        PACKAGE_NAME=$(echo "$LOCATION" | tr '[:upper:]' '[:lower:]')
+        cat > "$MODULE_FILE" << EOF
+// Package $PACKAGE_NAME provides ${LOCATION} functionality for ${FEATURE_NAME}
+package $PACKAGE_NAME
+
+import (
+    "fmt"
+)
+
+// ${MODULE_NAME} represents [brief description]
+type ${MODULE_NAME} struct {
+    // Add fields as needed
+}
+
+// New${MODULE_NAME} creates a new ${MODULE_NAME} instance
+func New${MODULE_NAME}() *${MODULE_NAME} {
+    return &${MODULE_NAME}{
+        // Initialize fields
+    }
+}
+
+// Execute performs the main functionality
+func (m *${MODULE_NAME}) Execute() error {
+    // Implement main functionality
+    return nil
+}
+EOF
+        ;;
+    ".rs")
+        cat > "$MODULE_FILE" << EOF
+//! ${MODULE_NAME}
+//! 
+//! ${FEATURE_NAME} feature - ${LOCATION}
+//! 
+//! This module provides functionality for [brief description].
+
+use std::error::Error;
+
+/// ${MODULE_NAME} struct for handling [specific functionality]
+pub struct ${MODULE_NAME} {
+    // Add fields as needed
+}
+
+impl ${MODULE_NAME} {
+    /// Create a new ${MODULE_NAME} instance
+    pub fn new() -> Self {
+        Self {
+            // Initialize fields
+        }
+    }
+
+    /// Main functionality - replace with actual implementation
+    pub fn execute(&self) -> Result<(), Box<dyn Error>> {
+        // Implement main functionality
+        Ok(())
+    }
+}
+
+impl Default for ${MODULE_NAME} {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+EOF
+        ;;
+    ".java")
+        cat > "$MODULE_FILE" << EOF
+/**
+ * ${MODULE_NAME}
+ * 
+ * ${FEATURE_NAME} feature - ${LOCATION}
+ * 
+ * This class provides functionality for [brief description].
+ * 
+ * @author Generated by Portable Development Methodology
+ * @since $(date '+%Y-%m-%d')
+ */
+public class ${MODULE_NAME} {
+    
+    /**
+     * Create a new ${MODULE_NAME} instance.
+     */
+    public ${MODULE_NAME}() {
+        // Initialize the module
+    }
+    
+    /**
+     * Main functionality - replace with actual implementation.
+     * 
+     * @throws Exception if operation fails
+     */
+    public void execute() throws Exception {
+        // Implement main functionality
+    }
+}
+EOF
+        ;;
+    *)
+        # Generic template for other languages
+        cat > "$MODULE_FILE" << EOF
+/*
+ * ${MODULE_NAME}
+ * 
+ * ${FEATURE_NAME} feature - ${LOCATION}
+ * 
+ * This module provides functionality for [brief description].
+ * 
+ * Author: Generated by Portable Development Methodology
+ * Created: $(date '+%Y-%m-%d')
+ */
+
+// TODO: Implement ${MODULE_NAME} according to your language's conventions
+// This is a generic template - customize for your specific technology stack
+EOF
+        ;;
+esac
+
+echo "📝 Module file created: $MODULE_FILE"
+
+# Create basic test file based on file extension
+case $FILE_EXT in
+    ".ts"|".js")
+        cat > "$TEST_FILE" << EOF
+/**
+ * Tests for ${MODULE_NAME}
+ */
+
+import { ${MODULE_NAME} } from './${MODULE_NAME}';
+
+describe('${MODULE_NAME}', () => {
+  let module: ${MODULE_NAME};
+
+  beforeEach(() => {
+    module = new ${MODULE_NAME}();
+  });
+
+  describe('constructor', () => {
+    it('should create an instance', () => {
+      expect(module).toBeInstanceOf(${MODULE_NAME});
+    });
+  });
+
+  describe('execute', () => {
+    it('should execute successfully', () => {
+      expect(() => module.execute()).not.toThrow();
+    });
+  });
+
+  // Add more test cases as needed
+});
+EOF
+        ;;
+    ".py")
+        cat > "$TEST_FILE" << EOF
+"""
+Tests for ${MODULE_NAME}
+"""
+
+import unittest
+from .${MODULE_NAME,,} import ${MODULE_NAME}
+
+
+class Test${MODULE_NAME}(unittest.TestCase):
+    """Test cases for ${MODULE_NAME}."""
+
+    def setUp(self) -> None:
+        """Set up test fixtures."""
+        self.module = ${MODULE_NAME}()
+
+    def test_constructor(self) -> None:
+        """Test ${MODULE_NAME} constructor."""
+        self.assertIsInstance(self.module, ${MODULE_NAME})
+
+    def test_execute(self) -> None:
+        """Test execute method."""
+        # Test the main functionality
+        self.module.execute()
+
+    # Add more test methods as needed
+
+
+if __name__ == '__main__':
+    unittest.main()
+EOF
+        ;;
+    ".go")
+        cat > "$TEST_FILE" << EOF
+package $PACKAGE_NAME
+
+import (
+    "testing"
+)
+
+func Test${MODULE_NAME}_New(t *testing.T) {
+    module := New${MODULE_NAME}()
+    if module == nil {
+        t.Error("New${MODULE_NAME}() returned nil")
+    }
+}
+
+func Test${MODULE_NAME}_Execute(t *testing.T) {
+    module := New${MODULE_NAME}()
+    err := module.Execute()
+    if err != nil {
+        t.Errorf("Execute() returned error: %v", err)
+    }
+}
+
+// Add more test functions as needed
+EOF
+        ;;
+    ".rs")
+        cat > "$TEST_FILE" << EOF
+//! Tests for ${MODULE_NAME}
+
+use super::*;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_new() {
+        let module = ${MODULE_NAME}::new();
+        // Add assertions
+    }
+
+    #[test]
+    fn test_execute() {
+        let module = ${MODULE_NAME}::new();
+        let result = module.execute();
+        assert!(result.is_ok());
+    }
+
+    // Add more test functions as needed
+}
+EOF
+        ;;
+    ".java")
+        cat > "$TEST_FILE" << EOF
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Tests for ${MODULE_NAME}
+ */
+class ${MODULE_NAME}Test {
+    
+    private ${MODULE_NAME} module;
+    
+    @BeforeEach
+    void setUp() {
+        module = new ${MODULE_NAME}();
+    }
+    
+    @Test
+    void testConstructor() {
+        assertNotNull(module);
+    }
+    
+    @Test
+    void testExecute() {
+        assertDoesNotThrow(() -> module.execute());
+    }
+    
+    // Add more test methods as needed
+}
+EOF
+        ;;
+    *)
+        cat > "$TEST_FILE" << EOF
+/*
+ * Tests for ${MODULE_NAME}
+ * 
+ * TODO: Implement tests according to your language's testing framework
+ * This is a generic template - customize for your specific technology stack
+ */
+
+// Add test implementation here
+EOF
+        ;;
+esac
+
+echo "🧪 Test file created: $TEST_FILE"
 
 # Update project memory
 echo "📝 Updating project memory..."
 DATE=$(date '+%Y-%m-%d %H:%M')
 echo "" >> project_memory.md
-echo "### ${DATE} - Created ${COMPONENT_NAME} component" >> project_memory.md
-echo "- Added ${COMPONENT_NAME} to ${FEATURE_NAME} feature" >> project_memory.md
-echo "- Created component with tests and Storybook story" >> project_memory.md
-echo "- Type: ${COMPONENT_TYPE}" >> project_memory.md
+echo "### ${DATE} - Created ${MODULE_NAME} module" >> project_memory.md
+echo "- Added ${MODULE_NAME} to ${FEATURE_NAME}/${LOCATION}" >> project_memory.md
+echo "- Created module file with tests and documentation" >> project_memory.md
+echo "- File type: ${FILE_EXT}" >> project_memory.md
 echo "" >> project_memory.md
 
-echo "✅ Component ${COMPONENT_NAME} created successfully!"
+echo "✅ Module ${MODULE_NAME} created successfully!"
 echo ""
 echo "📁 Files created:"
-echo "   ${FULL_COMPONENT_DIR}/"
-echo "   ├── ${COMPONENT_NAME}.tsx"
-echo "   ├── ${COMPONENT_NAME}.scss"
-echo "   ├── ${COMPONENT_NAME}.test.tsx"
-echo "   ├── ${COMPONENT_NAME}.stories.tsx"
-echo "   └── index.ts"
+echo "   ${MODULE_DIR}/"
+echo "   ├── ${MODULE_NAME}${FILE_EXT}      # Module implementation"
+echo "   ├── ${MODULE_NAME}.test${FILE_EXT}  # Unit tests"
+echo "   └── ${MODULE_NAME}.md           # Documentation"
 echo ""
 echo "🎯 Next steps:"
-echo "1. Customize the component props and implementation"
-echo "2. Update the SCSS styles for your design system"
-echo "3. Add more test cases specific to your component behavior"
-echo "4. Update the Storybook story with relevant examples"
-echo "5. Import and use the component in your feature"
+echo "1. Implement the actual functionality in ${MODULE_FILE}"
+echo "2. Add comprehensive test cases in ${TEST_FILE}"
+echo "3. Update the documentation in ${MODULE_NAME}.md"
+echo "4. Consider adding integration tests if needed"
+echo "5. Update feature documentation with new module"
