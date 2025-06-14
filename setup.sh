@@ -79,6 +79,14 @@ echo "⚙️ Configuring VS Code..."
 if [ ! -d ".vscode" ]; then
     mkdir -p .vscode
     cp .methodology/templates/vscode/* .vscode/
+    
+    # Add workspace-specific Copilot settings
+    cat >> .vscode/settings.json << 'EOF'
+{
+  "chat.instructionsFilesLocations": [".github/instructions"],
+  "chat.promptFilesLocations": [".github/prompts"]
+}
+EOF
 fi
 
 # Create GitHub Copilot instruction files structure
@@ -122,6 +130,33 @@ This project follows the Portable Development Methodology. Always reference proj
 EOF
 
     # Create specific instruction files
+    cat > .github/instructions/methodology.instructions.md << EOF
+---
+description: "Core development methodology guidelines"
+applyTo: "**"
+---
+
+# Development Methodology Instructions
+
+## Project Structure
+- Follow feature-based organization: src/features/[feature-name]/{core,models,services,tests}
+- Keep related functionality together regardless of technology stack
+- Use hierarchical building: data models → core logic → integrations → tests
+
+## Quality Standards
+- Single responsibility principle for all modules/functions
+- Comprehensive error handling and validation
+- Clear, meaningful naming conventions
+- Proper separation of concerns
+- Performance and security considerations
+
+## Documentation
+- Update project_memory.md for significant changes
+- Use language-appropriate documentation standards
+- Include inline comments for complex logic
+- Maintain README.md with current usage examples
+EOF
+
     cat > .github/instructions/testing.instructions.md << EOF
 ---
 description: "Testing guidelines and patterns"
@@ -131,20 +166,21 @@ applyTo: "**/*test*/**"
 # Testing Instructions
 
 ## Test Organization
-- Unit tests: Test individual functions/modules
-- Integration tests: Test feature workflows
+- Unit tests: Test individual functions/modules in isolation
+- Integration tests: Test feature workflows and external integrations
 - Use descriptive test names: test_[what]_[when]_[expected]
 
 ## Test Patterns
 - Follow AAA pattern: Arrange, Act, Assert
-- Mock external dependencies
+- Mock external dependencies appropriately
 - Test both success and failure scenarios
 - Include edge cases and boundary conditions
 
 ## Framework Guidelines
-- Use appropriate testing framework for the stack
+- Use appropriate testing framework for the technology stack
 - Maintain consistent test structure across the project
 - Ensure tests are independent and can run in any order
+- Aim for high coverage of critical business logic
 EOF
 
     cat > .github/instructions/security.instructions.md << EOF
@@ -156,19 +192,34 @@ applyTo: "**"
 # Security Instructions
 
 ## Input Validation
-- Validate and sanitize all user inputs
+- Validate and sanitize all user inputs at entry points
 - Use parameterized queries for database operations
-- Implement proper authentication and authorization
+- Implement proper input type checking and bounds validation
+- Escape output appropriately for the context (HTML, SQL, etc.)
+
+## Authentication & Authorization
+- Implement proper authentication mechanisms
+- Use role-based access control (RBAC) where appropriate
+- Never store passwords in plain text
+- Implement secure session management
 
 ## Error Handling
 - Don't expose sensitive information in error messages
-- Log security events appropriately
-- Implement rate limiting where applicable
+- Log security events appropriately (without sensitive data)
+- Implement proper error boundaries and fallbacks
+- Use consistent error response formats
 
-## Dependencies
-- Keep dependencies updated
-- Audit third-party packages for vulnerabilities
-- Use secure coding practices for the specific language/framework
+## Dependencies & Configuration
+- Keep dependencies updated and audit for vulnerabilities
+- Use environment variables for sensitive configuration
+- Implement rate limiting and request throttling
+- Follow security best practices for the specific language/framework
+
+## Data Protection
+- Encrypt sensitive data at rest and in transit
+- Implement proper data retention and deletion policies
+- Use secure random number generation
+- Follow GDPR/privacy regulations where applicable
 EOF
 fi
 

@@ -1,10 +1,20 @@
 ---
 description: "Generate comprehensive tests following methodology patterns"
+mode: "agent"
 ---
 
 # Generate Tests
 
 Generate comprehensive tests for the selected code following the Portable Development Methodology testing standards.
+
+## Context
+
+**Workspace**: ${workspaceFolder}
+**Selected Code**: ${selection}
+**Current File**: ${file}
+**File Directory**: ${fileDirname}
+
+Analyze the existing test patterns in the project and follow the established conventions.
 
 ## Testing Guidelines
 
@@ -31,11 +41,11 @@ Use descriptive names following the pattern:
 - **Edge Cases**: Boundary conditions, empty inputs, null values
 - **Security**: Authentication, authorization, input validation
 
-### 5. Framework-Specific Guidelines
-- **JavaScript/TypeScript**: Use Jest, Vitest, or similar
-- **Python**: Use pytest or unittest
-- **Go**: Use built-in testing package
-- **Java**: Use JUnit 5
+### 5. Framework Guidelines
+- **JavaScript/TypeScript**: Jest, Vitest, or project-appropriate framework
+- **Python**: pytest or unittest
+- **Go**: Built-in testing package
+- **Java**: JUnit 5
 - **Other languages**: Use appropriate testing framework
 
 ### 6. Mock Strategy
@@ -48,8 +58,10 @@ Use descriptive names following the pattern:
 - Consider creating test fixtures for complex data structures
 - Avoid hardcoded values where possible
 
-## Input
-Code to test: ${selection}
+## Input Variables
+- **Test Type**: ${input:testType:What type of tests? (unit/integration/e2e)}
+- **Coverage Focus**: ${input:coverage:Any specific scenarios to focus on?}
+- **Framework**: ${input:framework:Testing framework to use (auto-detect if not specified)}
 
 ## Output Requirements
 Generate:
@@ -58,9 +70,21 @@ Generate:
 3. **Mock implementations** for external dependencies
 4. **Test fixtures** if needed for complex data
 5. **Setup/teardown** code if required
+6. **Test configuration** files if needed
 
 Ensure tests are:
 - Comprehensive yet focused
 - Fast and reliable
 - Easy to understand and maintain
 - Following the project's existing test patterns
+- Properly organized in the test directory structure
+
+## Additional Considerations
+- Check for existing test utilities and helpers to reuse
+- Follow the project's test file naming conventions
+- Include performance tests for critical paths if appropriate
+- Consider accessibility tests for UI components
+- Add documentation for complex test scenarios
+
+[Reference the testing guidelines](.github/instructions/testing.instructions.md)
+[Reference the methodology instructions](.github/instructions/methodology.instructions.md)
