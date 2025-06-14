@@ -6,14 +6,56 @@ Consistent Git practices ensure clean history, clear communication, and efficien
 
 ## 📝 Commit Message Format
 
-### Conventional Commits Structure
+### Gitmoji + Conventional Commits Structure
+We use [Gitmoji](https://gitmoji.dev/) for visual clarity combined with conventional commits for semantic meaning:
+
 ```
-type(scope): description
+<gitmoji> <type>(<scope>): <description>
 
 [optional body]
 
 [optional footer(s)]
 ```
+
+### Primary Gitmoji Reference
+- 🎨 `:art:` - Improve structure/format of code
+- 🐛 `:bug:` - Fix bugs
+- ✨ `:sparkles:` - Introduce new features
+- 📝 `:memo:` - Add/update documentation
+- 🚀 `:rocket:` - Deploy/release changes
+- 💄 `:lipstick:` - Add/update UI and style
+- 🎉 `:tada:` - Begin project
+- ✅ `:white_check_mark:` - Add/update/pass tests
+- 🔒️ `:lock:` - Fix security issues
+- 🔧 `:wrench:` - Add/update configuration
+- 🌐 `:globe_with_meridians:` - Internationalization
+- 💚 `:green_heart:` - Fix CI build
+- ⬇️ `:arrow_down:` - Downgrade dependencies
+- ⬆️ `:arrow_up:` - Upgrade dependencies
+- 📌 `:pushpin:` - Pin dependencies
+- 👷 `:construction_worker:` - Add/update CI system
+- 📈 `:chart_with_upwards_trend:` - Add/update analytics
+- ♻️ `:recycle:` - Refactor code
+- ➕ `:heavy_plus_sign:` - Add dependency
+- ➖ `:heavy_minus_sign:` - Remove dependency
+- 🔨 `:hammer:` - Add/update development scripts
+- 🌱 `:seedling:` - Add/update seed files
+- 🚩 `:triangular_flag_on_post:` - Add/update/remove feature flags
+- 🥅 `:goal_net:` - Catch errors
+- 💫 `:dizzy:` - Add/update animations
+- 🗑️ `:wastebasket:` - Deprecate code
+- 🛂 `:passport_control:` - Work on authorization/roles/permissions
+- 🩹 `:adhesive_bandage:` - Simple fix for non-critical issue
+- 🧐 `:monocle_face:` - Data exploration/inspection
+- ⚰️ `:coffin:` - Remove dead code
+- 🧪 `:test_tube:` - Add failing test
+- 👔 `:necktie:` - Add/update business logic
+- 🩺 `:stethoscope:` - Add/update healthcheck
+- 🧱 `:bricks:` - Infrastructure related changes
+- 🧑‍💻 `:technologist:` - Improve developer experience
+- 💸 `:money_with_wings:` - Add sponsorships or money related stuff
+- 🧵 `:thread:` - Add/update code related to multithreading or concurrency
+- 🦺 `:safety_vest:` - Add/update code related to validation
 
 ### Commit Types
 - **feat**: A new feature
@@ -23,6 +65,10 @@ type(scope): description
 - **refactor**: A code change that neither fixes a bug nor adds a feature
 - **test**: Adding missing tests or correcting existing tests
 - **chore**: Changes to the build process or auxiliary tools and libraries
+- **build**: Changes that affect the build system or external dependencies
+- **ci**: Changes to CI configuration files and scripts
+- **perf**: A code change that improves performance
+- **revert**: Reverts a previous commit
 
 ### Scope Examples
 - **auth**: Authentication related changes
@@ -32,15 +78,37 @@ type(scope): description
 - **config**: Configuration changes
 - **deps**: Dependency updates
 
-### Examples
+### Gitmoji + Conventional Commit Examples
 ```bash
-feat(auth): add password reset functionality
-fix(ui): resolve button alignment issue in mobile view
-docs(readme): update installation instructions
-refactor(api): simplify user data validation
-test(user): add unit tests for user service
-chore(deps): update typescript to v5.0
-style(format): fix indentation in user component
+✨ feat(auth): add password reset functionality
+🐛 fix(ui): resolve button alignment issue in mobile view
+📝 docs(readme): update installation instructions
+♻️ refactor(api): simplify user data validation
+🧪 test(user): add unit tests for user service
+⬆️ chore(deps): update typescript to v5.0
+🎨 style(format): fix indentation in user component
+🚀 deploy: release version 1.2.0
+🔒️ fix(security): patch authentication vulnerability
+💄 feat(ui): add dark mode theme support
+🌐 feat(i18n): add French language support
+💚 fix(ci): resolve failing build pipeline
+🔧 chore(config): update ESLint configuration
+📈 feat(analytics): add user behavior tracking
+🥅 fix(error): improve error handling in API calls
+⚰️ refactor(cleanup): remove deprecated user methods
+🧱 chore(infra): update Docker configuration
+🦺 feat(validation): add input sanitization
+```
+
+### Multi-file Change Format
+For complex changes affecting multiple files:
+```bash
+✨ feat(auth): implement complete user authentication system
+
+📁 [AuthService.ts] - add core authentication logic
+📁 [LoginForm.tsx] - create login user interface  
+📁 [auth.test.ts] - add comprehensive test coverage
+📁 [project_memory.md] - update with auth implementation details
 ```
 
 ## 🌿 Branching Strategy

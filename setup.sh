@@ -81,6 +81,97 @@ if [ ! -d ".vscode" ]; then
     cp .methodology/templates/vscode/* .vscode/
 fi
 
+# Create GitHub Copilot instruction files structure
+echo "🤖 Setting up Copilot instruction files..."
+if [ ! -d ".github" ]; then
+    mkdir -p .github/instructions
+    mkdir -p .github/prompts
+    
+    # Copy prompt templates
+    if [ -d ".methodology/templates/github/prompts" ]; then
+        cp .methodology/templates/github/prompts/* .github/prompts/
+    fi
+    
+    # Create main Copilot instructions file
+    cat > .github/copilot-instructions.md << EOF
+# ${PROJECT_NAME} - Copilot Instructions
+
+## Project Context
+This project follows the Portable Development Methodology. Always reference project_memory.md for current context and decisions.
+
+## Development Principles
+- **Tech-Stack Agnostic**: Adapt to any programming language or framework
+- **Docs-First**: Check docs/ folder for project-specific guidelines
+- **Feature-Based**: Organize code in src/features/[feature-name]/{core,models,services,tests}
+- **Hierarchical Building**: Start with data models, then core logic, then integrations, then tests
+
+## Code Generation Guidelines
+- Follow the established patterns in the codebase
+- Use appropriate language conventions and best practices
+- Include comprehensive error handling and validation
+- Write tests for all new functionality
+- Document complex logic with inline comments
+- Update project_memory.md for significant changes
+
+## Quality Standards
+- Single responsibility principle for all modules/functions
+- Comprehensive test coverage for critical paths
+- Clear, meaningful naming conventions
+- Proper separation of concerns
+- Performance and security considerations
+EOF
+
+    # Create specific instruction files
+    cat > .github/instructions/testing.instructions.md << EOF
+---
+description: "Testing guidelines and patterns"
+applyTo: "**/*test*/**"
+---
+
+# Testing Instructions
+
+## Test Organization
+- Unit tests: Test individual functions/modules
+- Integration tests: Test feature workflows
+- Use descriptive test names: test_[what]_[when]_[expected]
+
+## Test Patterns
+- Follow AAA pattern: Arrange, Act, Assert
+- Mock external dependencies
+- Test both success and failure scenarios
+- Include edge cases and boundary conditions
+
+## Framework Guidelines
+- Use appropriate testing framework for the stack
+- Maintain consistent test structure across the project
+- Ensure tests are independent and can run in any order
+EOF
+
+    cat > .github/instructions/security.instructions.md << EOF
+---
+description: "Security guidelines for code generation"
+applyTo: "**"
+---
+
+# Security Instructions
+
+## Input Validation
+- Validate and sanitize all user inputs
+- Use parameterized queries for database operations
+- Implement proper authentication and authorization
+
+## Error Handling
+- Don't expose sensitive information in error messages
+- Log security events appropriately
+- Implement rate limiting where applicable
+
+## Dependencies
+- Keep dependencies updated
+- Audit third-party packages for vulnerabilities
+- Use secure coding practices for the specific language/framework
+EOF
+fi
+
 # Note: Technology-specific files (package.json, requirements.txt, etc.) 
 # should be created manually based on your project's needs
 
