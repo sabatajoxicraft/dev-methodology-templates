@@ -84,7 +84,8 @@ if [ ! -d ".vscode" ]; then
     cat >> .vscode/settings.json << 'EOF'
 {
   "chat.instructionsFilesLocations": [".github/instructions"],
-  "chat.promptFilesLocations": [".github/prompts"]
+  "chat.promptFilesLocations": [".github/prompts"],
+  "chat.modeFilesLocations": [".github/chatmodes"]
 }
 EOF
 fi
@@ -94,10 +95,16 @@ echo "🤖 Setting up Copilot instruction files..."
 if [ ! -d ".github" ]; then
     mkdir -p .github/instructions
     mkdir -p .github/prompts
+    mkdir -p .github/chatmodes
     
     # Copy prompt templates
     if [ -d ".methodology/templates/github/prompts" ]; then
         cp .methodology/templates/github/prompts/* .github/prompts/
+    fi
+    
+    # Copy chat mode templates
+    if [ -d ".methodology/templates/github/chatmodes" ]; then
+        cp .methodology/templates/github/chatmodes/* .github/chatmodes/
     fi
     
     # Create main Copilot instructions file
