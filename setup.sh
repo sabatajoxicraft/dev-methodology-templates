@@ -76,6 +76,11 @@ fi
 if [ ! -f ".gitignore" ]; then
     echo "🚫 Creating .gitignore..."
     cp .methodology/templates/.gitignore.template .gitignore
+    
+    # Add .methodology to gitignore to avoid embedded repository warning
+    echo "" >> .gitignore
+    echo "# Methodology templates (not part of project)" >> .gitignore
+    echo ".methodology/" >> .gitignore
 fi
 
 # Create README.md if it doesn't exist
@@ -102,7 +107,17 @@ ln -sf ../.methodology/automation/update-memory.sh scripts/update-memory
 if [ ! -d ".git" ]; then
     echo "🔀 Initializing git repository..."
     git init
+    
+    # Add all files except .methodology (which is excluded by .gitignore)
     git add .
+    
+    # Check if .methodology was accidentally added and remove it
+    if git ls-files | grep -q "^\.methodology"; then
+        echo "🔧 Removing .methodology from git tracking..."
+        git rm -r --cached .methodology 2>/dev/null || true
+        git add .gitignore
+    fi
+    
     git commit -m "🎯 feat: initialize project with portable development methodology"
 fi
 

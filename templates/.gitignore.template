@@ -209,9 +209,11 @@ dmypy.json
 
 # Project specific
 *.backup
-.methodology/templates/
 temp/
 tmp/
+
+# Methodology templates (not part of project)
+.methodology/
 
 # Keep methodology core files
 !.methodology/setup.sh
