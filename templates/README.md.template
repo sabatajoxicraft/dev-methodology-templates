@@ -1,0 +1,177 @@
+# ${PROJECT_NAME}
+
+A modern, well-structured project built with the portable development methodology.
+
+## 🎯 Quick Start
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm start
+
+# Run tests
+npm test
+
+# Build for production
+npm run build
+```
+
+## 📁 Project Structure
+
+```
+${PROJECT_NAME}/
+├── docs/                    # 📚 Project documentation
+│   ├── architecture.md     # System architecture
+│   ├── style-guide.md      # Coding standards
+│   └── api-conventions.md  # API design patterns
+├── src/
+│   ├── features/           # 🧩 Feature-based organization
+│   │   └── [feature-name]/
+│   │       ├── components/ # React components
+│   │       ├── hooks/      # Custom hooks
+│   │       ├── services/   # Business logic
+│   │       ├── types.ts    # TypeScript types
+│   │       └── __tests__/  # Tests
+│   ├── shared/             # 🔄 Shared utilities
+│   │   ├── components/     # Reusable UI components
+│   │   ├── hooks/          # Shared hooks
+│   │   ├── utils/          # Utility functions
+│   │   └── types/          # Common types
+│   └── assets/             # 🎨 Static assets
+├── project_memory.md       # 📝 Project context and decisions
+├── .methodology/           # 🛠️ Development methodology
+└── scripts/                # 🚀 Automation scripts
+```
+
+## 🛠️ Development Workflow
+
+### Creating Features
+```bash
+# Create a new feature
+npm run create:feature user-authentication
+
+# Create a component within a feature
+npm run create:component LoginForm user-authentication
+```
+
+### Component Hierarchy
+1. **Define interfaces/types** in `types.ts`
+2. **Create the component** with proper TypeScript typing
+3. **Add styling** with SCSS modules
+4. **Write tests** for all functionality
+5. **Create Storybook stories** for documentation
+
+### Code Organization
+- **Feature-based structure**: Related functionality grouped together
+- **Single responsibility**: Each component/function does one thing well
+- **Type safety**: Strict TypeScript usage throughout
+- **Test coverage**: Aim for 80%+ coverage on critical paths
+
+## 🧪 Testing Strategy
+
+- **Unit Tests**: Test individual components and functions
+- **Integration Tests**: Test feature workflows
+- **E2E Tests**: Test complete user journeys
+
+```bash
+npm test              # Run all tests
+npm run test:watch    # Run tests in watch mode
+npm run test:coverage # Generate coverage report
+```
+
+## 📚 Documentation
+
+- **Project Memory**: `project_memory.md` - Current state and context
+- **Architecture**: `docs/architecture.md` - System design decisions
+- **Style Guide**: `docs/style-guide.md` - Coding conventions
+- **API Conventions**: `docs/api-conventions.md` - API design patterns
+
+## 🎨 Styling
+
+- **SCSS Modules**: Component-scoped styling
+- **BEM Methodology**: Consistent class naming
+- **Design System**: Reusable design tokens
+- **Responsive Design**: Mobile-first approach
+
+## 🔧 Available Scripts
+
+| Script | Description |
+|--------|-------------|
+| `npm start` | Start development server |
+| `npm test` | Run test suite |
+| `npm run build` | Build for production |
+| `npm run lint` | Check code quality |
+| `npm run format` | Format code with Prettier |
+| `npm run storybook` | Start Storybook |
+| `npm run create:feature` | Create new feature |
+| `npm run create:component` | Create new component |
+| `npm run update:memory` | Update project memory |
+
+## 🚀 Deployment
+
+### Development
+```bash
+npm start
+# Application runs on http://localhost:3000
+```
+
+### Production Build
+```bash
+npm run build
+# Creates optimized build in `build/` folder
+```
+
+### Environment Variables
+Create `.env` files for different environments:
+```bash
+REACT_APP_API_URL=https://api.example.com
+REACT_APP_ENV=development
+```
+
+## 🤝 Contributing
+
+1. **Check project memory**: Review `project_memory.md` for current context
+2. **Follow style guide**: Adhere to conventions in `docs/style-guide.md`
+3. **Write tests**: Ensure new code has appropriate test coverage
+4. **Update documentation**: Keep docs current with changes
+5. **Update memory**: Record significant changes in project memory
+
+### Git Workflow
+```bash
+# Create feature branch
+git checkout -b feature/new-feature
+
+# Make changes and commit
+git add .
+git commit -m "feat(feature): add new functionality"
+
+# Update project memory
+npm run update:memory "Completed new feature implementation"
+
+# Push and create PR
+git push origin feature/new-feature
+```
+
+## 📊 Project Status
+
+**Current Phase**: [Check project_memory.md]  
+**Last Updated**: [Date from project_memory.md]  
+**Team Size**: [Number of contributors]  
+**Tech Stack**: React, TypeScript, SCSS, Jest, Storybook
+
+## 📞 Support
+
+- **Documentation**: Check `docs/` folder for detailed information
+- **Issues**: Use GitHub issues for bug reports and feature requests
+- **Questions**: Refer to project memory for context and decisions
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+**Built with the Portable Development Methodology** 🎯  
+*Consistent, documented, and maintainable development across any environment.*

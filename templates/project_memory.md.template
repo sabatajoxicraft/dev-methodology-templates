@@ -1,0 +1,94 @@
+# Project Memory - ${PROJECT_NAME}
+
+**Last Updated**: ${DATE}  
+**Environment**: ${ENVIRONMENT}  
+**Status**: Active Development
+
+## 🎯 Project Overview
+
+### Purpose
+<!-- Brief description of what this project does and why it exists -->
+
+### Key Goals
+- [ ] Goal 1
+- [ ] Goal 2  
+- [ ] Goal 3
+
+### Success Metrics
+<!-- How will you measure success? -->
+
+## 🏗️ Architecture Decisions
+
+### Technology Stack
+- **Frontend**: 
+- **Backend**: 
+- **Database**: 
+- **Deployment**: 
+
+### Key Design Decisions
+<!-- Document important architectural and design decisions -->
+
+## 📋 Current Sprint / Phase
+
+### In Progress
+<!-- What are you currently working on? -->
+
+### Next Up
+<!-- What's next in the queue? -->
+
+### Blocked/Waiting
+<!-- Any blockers or dependencies? -->
+
+## 🧩 Features
+
+### Completed Features
+<!-- List completed features with dates -->
+
+### Feature Backlog
+<!-- Planned features in priority order -->
+
+## 🔧 Technical Debt & Improvements
+
+### Known Issues
+<!-- Technical debt, bugs, or areas needing improvement -->
+
+### Performance Considerations
+<!-- Performance bottlenecks or optimization opportunities -->
+
+## 📚 Learning & Evolution
+
+### New Patterns Discovered
+<!-- Document new patterns, techniques, or better practices discovered -->
+
+### Methodology Updates
+<!-- Suggestions for improving the development methodology -->
+
+## 🚀 Deployment & Operations
+
+### Environments
+- **Development**: 
+- **Staging**: 
+- **Production**: 
+
+### Deployment Process
+<!-- Steps for deploying the application -->
+
+## 📞 Key Contacts & Resources
+
+### Team Members
+<!-- Key people involved in the project -->
+
+### External Resources
+<!-- Important links, documentation, APIs, etc. -->
+
+## 📝 Notes & Context
+
+### Important Decisions Context
+<!-- Why certain decisions were made, trade-offs considered -->
+
+### Lessons Learned
+<!-- What has been learned during development -->
+
+---
+
+*This file is the single source of truth for project context and should be updated regularly as the project evolves.*
